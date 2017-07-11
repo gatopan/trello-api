@@ -17,6 +17,71 @@ require "rails/test_unit/railtie"
 Bundler.require(*Rails.groups)
 
 module Interface
+  ENTITY_TYPES = {
+    MULTIVERSE: 0,
+    PERSON:     10,
+    COMPANY:    20,
+    BOARD:      30,
+    LIST:       40,
+    CARD:       50,
+    ITEM:       60
+  }
+  ENTITY_ATTRIBUTE_TYPES = [
+    {
+      name: :string,
+      postgresql_type: :string,
+      tester_proc: Proc.new{|target| target.class <= String },
+      enum_value: 0
+    },
+    {
+      name: :text,
+      postgresql_type: :text,
+      tester_proc: Proc.new{|target| target.class <= String },
+      enum_value: 10
+    },
+    {
+      name: :integer,
+      postgresql_type: :integer,
+      tester_proc: Proc.new{|target| target.class <= Integer },
+      enum_value: 20
+    },
+    {
+      name: :float,
+      postgresql_type: :float,
+      tester_proc: Proc.new{|target| target.class <= Float },
+      enum_value: 30
+    },
+    {
+      name: :boolean,
+      postgresql_type: :boolean,
+      tester_proc: Proc.new{|target| [TrueClass, FalseClass].include?(target.class) },
+      enum_value: 40
+    },
+    {
+      name: :date,
+      postgresql_type: :date,
+      tester_proc: Proc.new{|target| target.class <= Date },
+      enum_value: 50
+    },
+    {
+      name: :datetime,
+      postgresql_type: :datetime,
+      tester_proc: Proc.new{|target| target.class <= DateTime },
+      enum_value: 60
+    },
+    {
+      name: :binary,
+      postgresql_type: :binary,
+      tester_proc: Proc.new{|target| target.class <= Object },
+      enum_value: 70
+    },
+    {
+      name: :symbol,
+      postgresql_type: :string,
+      tester_proc: Proc.new{|target| target.class <= Symbol},
+      enum_value: 80
+    }
+  ]
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
@@ -29,5 +94,6 @@ module Interface
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.autoload_paths << "#{Rails.root}/app/decorators"
   end
 end
